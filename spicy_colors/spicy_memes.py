@@ -59,11 +59,14 @@ def keyPressed(app, event):
         if event.key in app.alphabet:
             index = app.alphabet.find(event.key)
             app.input.append(app.alphabet[index])
-        elif event.key == "Space":
+            print(app.input)
+        if event.key == "Space":
             app.input.append(" ")
-        elif event.key == "Backspace":
+            print(app.input)
+        if event.key == "Backspace":
             app.input.pop()
-        elif event.key == "Enter":
+            print(app.input)
+        if event.key == "Enter":
             app.x = app.input
             app.started = True
             createRound(app)
@@ -194,7 +197,7 @@ def drawImages(app, canvas):
 
 # draws the amazing Kosbie background (created by: Ariel Kwak)
 def drawBackground(app, canvas):
-    background = Image.open("kosbie.jpeg")
+    background = Image.open("/Users/junopark/Documents/GitHub/Spicy-Colors-Meme-Generator/spicy colors/background.jpg")
     background = background.resize((app.width, app.height))
     canvas.create_image(app.width / 2, app.height / 2,
                         image = ImageTk.PhotoImage(background))
