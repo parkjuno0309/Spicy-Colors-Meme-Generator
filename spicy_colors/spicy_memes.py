@@ -4,13 +4,15 @@ from classes import Tournament
 from fake_useragent import UserAgent
 from bs4 import BeautifulSoup
 import random, string, re, requests, urllib
+from io import BytesIO
+
 
 # gets images based on user search query input before game
 def getImages(app):
     header = {"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_5) AppleWebKit 537.36 (KHTML, like Gecko) Chrome",
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"}
     keyword = "".join(app.input)
-    app.x = f"{keyword} meme"
+    app.x = f"{keyword}%20meme"
     url = "https://imgur.com/search/score?q=%s"%(app.x)
     response = requests.get(url, headers = header)
     soup = BeautifulSoup(response.text, 'html.parser')
@@ -63,10 +65,10 @@ def keyPressed(app, event):
         if event.key == "Space":
             app.input.append(" ")
             print(app.input)
-        if event.key == "Backspace":
+        if event.key == "BackSpace" and len(app.input) > 0:
             app.input.pop()
             print(app.input)
-        if event.key == "Enter":
+        if event.key == "Return":
             app.x = app.input
             app.started = True
             createRound(app)
@@ -185,8 +187,16 @@ def drawImages(app, canvas):
     size = int(app.imgSize)
     link1 = f'http://{app.round.versus[0]}'
     link2 = f'http://{app.round.versus[1]}'
-    img1 = Image.open(requests.get(link1, stream=True).raw)
-    img2 = Image.open(requests.get(link2, stream=True).raw)
+    print(link1)
+    response1 = requests.get(link1, stream=True)
+    print(response1)
+    response1.raise_for_status()
+    img1 = Image.open(BytesIO(response1.content))
+    print(img1)
+    print('DONE')
+    response2 = requests.get(link2, stream=True)
+    response2.raise_for_status()
+    img2 = Image.open(BytesIO(response2.content))
     img1, img2 = img1.resize((size, size)), img2.resize((size, size))
     canvas.create_image(app.margin + app.boardMargin + size / 2,
                         app.margin + app.boardMargin + size / 2,
@@ -197,7 +207,7 @@ def drawImages(app, canvas):
 
 # draws the amazing Kosbie background (created by: Ariel Kwak)
 def drawBackground(app, canvas):
-    background = Image.open("/Users/junopark/Documents/GitHub/Spicy-Colors-Meme-Generator/spicy colors/background.jpg")
+    background = Image.open("/Users/junopark/Documents/GitHub/Spicy-Colors-Meme-Generator/spicy_colors/background.jpg")
     background = background.resize((app.width, app.height))
     canvas.create_image(app.width / 2, app.height / 2,
                         image = ImageTk.PhotoImage(background))
